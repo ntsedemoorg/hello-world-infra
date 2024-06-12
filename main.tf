@@ -2,6 +2,10 @@ provider "aws" {
   region = "eu-west-1"
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
@@ -53,7 +57,7 @@ resource "aws_lb" "frontend_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.subnet.id]
+  subnets            = toset(data.aws_availability_zones.available.zone_ids)
 
   enable_deletion_protection = false
 
@@ -145,7 +149,7 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
 
 resource "aws_ecs_task_definition" "api_task" {
   family                   = "hello-world-api"
-  network_mode             = "bridge"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
 
   container_definitions = jsonencode([{
@@ -163,7 +167,7 @@ resource "aws_ecs_task_definition" "api_task" {
 
 resource "aws_ecs_task_definition" "frontend_task" {
   family                   = "hello-world-frontend"
-  network_mode             = "bridge"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
 
   container_definitions = jsonencode([{
