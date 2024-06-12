@@ -57,7 +57,7 @@ resource "aws_lb" "frontend_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = toset(data.aws_availability_zones.available.zone_ids)
+  subnets            = toset(data.aws_availability_zones.available.names)
 
   enable_deletion_protection = false
 
@@ -178,7 +178,7 @@ resource "aws_ecs_task_definition" "frontend_task" {
     cpu = 256
     portMappings = [{
       containerPort = 5000
-      hostPort      = 80
+      hostPort      = 5000
     }]
     environment = [
       {
