@@ -10,6 +10,14 @@ resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
 
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "main"
+  }
+}
+
 resource "aws_subnet" "subnets" {
   count = length(data.aws_availability_zones.available.names)
   vpc_id            = aws_vpc.main.id
@@ -201,7 +209,7 @@ resource "aws_ecs_service" "api_service" {
   network_configuration {
     subnets          = aws_subnet.subnets.*.id
     security_groups  = [aws_security_group.ecs_sg.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 }
 
@@ -216,6 +224,6 @@ resource "aws_ecs_service" "frontend_service" {
   network_configuration {
     subnets          = aws_subnet.subnets.*.id
     security_groups  = [aws_security_group.ecs_sg.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 }
