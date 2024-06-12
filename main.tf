@@ -213,13 +213,6 @@ resource "aws_ecs_service" "api_service" {
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = false
   }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.frontend_tg.arn
-    container_name   = "hello-world-frontend"
-    container_port   = 5000
-  }
-
 }
 
 resource "aws_ecs_service" "frontend_service" {
@@ -234,6 +227,12 @@ resource "aws_ecs_service" "frontend_service" {
     subnets          = aws_subnet.subnets.*.id
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = false
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.frontend_tg.arn
+    container_name   = "hello-world-frontend"
+    container_port   = 5000
   }
 }
 
