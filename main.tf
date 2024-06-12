@@ -161,7 +161,7 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
 
 resource "aws_ecs_task_definition" "api_task" {
   family                   = "hello-world-api"
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
 
   container_definitions = jsonencode([{
@@ -179,7 +179,7 @@ resource "aws_ecs_task_definition" "api_task" {
 
 resource "aws_ecs_task_definition" "frontend_task" {
   family                   = "hello-world-frontend"
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["EC2"]
 
   container_definitions = jsonencode([{
