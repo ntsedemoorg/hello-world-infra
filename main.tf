@@ -208,12 +208,6 @@ resource "aws_ecs_service" "api_service" {
   desired_count   = 1
 
   launch_type = "EC2"
-
-  network_configuration {
-    subnets          = aws_subnet.subnets.*.id
-    security_groups  = [aws_security_group.ecs_sg.id]
-    assign_public_ip = false
-  }
 }
 
 resource "aws_ecs_service" "frontend_service" {
@@ -223,12 +217,6 @@ resource "aws_ecs_service" "frontend_service" {
   desired_count   = 1
 
   launch_type = "EC2"
-
-  network_configuration {
-    subnets          = aws_subnet.subnets.*.id
-    security_groups  = [aws_security_group.ecs_sg.id]
-    assign_public_ip = false
-  }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.frontend_tg.arn
