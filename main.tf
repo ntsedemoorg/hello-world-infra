@@ -134,7 +134,7 @@ resource "aws_key_pair" "ec2_key" {
   }
 
 resource "aws_instance" "ecs_instance" {
-  ami                    = "ami-0dcc20d3a15abf9bb" # Amazon Linux 2 AMI (HVM)
+  ami                    = "ami-05d6c5e5d6fc4f650" # al2023-ami-ecs-hvm-2023.0.20240610-kernel-6.1-x86_64
   instance_type          = "t2.micro"
   iam_instance_profile   = aws_iam_instance_profile.ecs_instance_profile.name
   key_name               = aws_key_pair.ec2_key.key_name
