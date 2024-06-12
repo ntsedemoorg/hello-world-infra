@@ -140,6 +140,7 @@ resource "aws_instance" "ecs_instance" {
   key_name               = aws_key_pair.ec2_key.key_name
   vpc_security_group_ids = [aws_security_group.ecs_sg.id]
   subnet_id              = aws_subnet.subnets[0].id
+  associate_public_ip_address = true
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
