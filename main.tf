@@ -141,10 +141,11 @@ resource "aws_instance" "ecs_instance" {
   vpc_security_group_ids = [aws_security_group.ecs_sg.id]
   subnet_id              = aws_subnet.subnets[0].id
 
-  user_data = <<-EOF
+  user_data = base64encode(<<-EOF
               #!/bin/bash
               echo ECS_CLUSTER=${aws_ecs_cluster.main.name} >> /etc/ecs/ecs.config
               EOF
+  )
 
   tags = {
     Name = "ecs-instance"
@@ -226,4 +227,20 @@ resource "aws_ecs_service" "frontend_service" {
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = false
   }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  tags   = { Name = "public" }
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  count          = length(data.aws_availability_zones.available.names)
+  subnet_id      = aws_subnet.subnets[count.index].id
+  route_table_id = aws_route_table.public.id
 }
