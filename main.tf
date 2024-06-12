@@ -11,7 +11,7 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "subnets" {
-  count = length(data.aws_avaiability_zones.available.names)
+  count = length(data.aws_availability_zones.available.names)
   vpc_id            = aws_vpc.main.id
   cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 4, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
@@ -131,7 +131,7 @@ resource "aws_instance" "ecs_instance" {
   iam_instance_profile   = aws_iam_instance_profile.ecs_instance_profile.name
   key_name               = aws_key_pair.ec2_key.key_name
   vpc_security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_id              = aws_subnet.subnet[0].id
+  subnet_id              = aws_subnet.subnets[0].id
 
   user_data = <<-EOF
               #!/bin/bash
