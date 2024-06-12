@@ -10,10 +10,11 @@ resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_subnet" "subnet" {
+resource "aws_subnet" "subnets" {
+  count = length(data.aws_avaiability_zones.available.names)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "eu-west-1a"
+  cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 4, count.index)
+  availability_zone = element(data.aws_availability_zones.available.names, count.index)
 }
 
 resource "aws_security_group" "ecs_sg" {
@@ -57,7 +58,7 @@ resource "aws_lb" "frontend_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = toset(data.aws_availability_zones.available.names)
+  subnets            = aws_subnet.subnets.*.id
 
   enable_deletion_protection = false
 
@@ -130,7 +131,7 @@ resource "aws_instance" "ecs_instance" {
   iam_instance_profile   = aws_iam_instance_profile.ecs_instance_profile.name
   key_name               = aws_key_pair.ec2_key.key_name
   vpc_security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_id              = aws_subnet.subnet.id
+  subnet_id              = aws_subnet.subnet[0].id
 
   user_data = <<-EOF
               #!/bin/bash
@@ -198,7 +199,7 @@ resource "aws_ecs_service" "api_service" {
   launch_type = "EC2"
 
   network_configuration {
-    subnets          = [aws_subnet.subnet.id]
+    subnets          = aws_subnet.subnets.*.id
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
@@ -213,7 +214,7 @@ resource "aws_ecs_service" "frontend_service" {
   launch_type = "EC2"
 
   network_configuration {
-    subnets          = [aws_subnet.subnet.id]
+    subnets          = aws_subnet.subnets.*.id
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
