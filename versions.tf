@@ -8,9 +8,6 @@ terraform {
     }
   }
 
-  backend "s3" {
-    region = "eu-west-1"
-    bucket = "891377327213-eu-west-1-state"    
-    key    = "infra/state.tfstate"   
-  }
+  # This is intentionally left blank and is populated using CLI flags as part of the CI pipeline
+  backend "s3" {}
 }
