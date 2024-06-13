@@ -13,6 +13,16 @@ resource "aws_ecs_task_definition" "api_task" {
       containerPort = 8080
       hostPort      = 8080
     }]
+    environment = [
+      {
+        name  = "MEMCACHED_HOST"
+        value = data.aws_elasticache_cluster.memcached.cluster_address
+      },
+      {
+        name  = "MEMCACHED_PORT"
+        value = tostring(data.aws_elasticache_cluster.memcached.port)
+      }
+    ]
   }])
 }
 

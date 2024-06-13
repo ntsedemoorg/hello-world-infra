@@ -8,3 +8,7 @@ data "aws_vpc" "main" {
 data "aws_ecs_cluster" "main" {
   cluster_name = var.ecs_cluster_name
 }
+
+data "aws_elasticache_cluster" "memcached" {
+    cluster_id = "memcached-cache"
+}
