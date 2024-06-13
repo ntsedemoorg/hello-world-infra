@@ -5,7 +5,7 @@ resource "aws_ecs_cluster" "main" {
 resource "aws_key_pair" "ec2_key" {
     key_name   = "ec2_key"
     public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB7YX+nyFbclLm52WfPj84ziw7Xmm9sjYzmMcUzuInac Sam"
-  }
+}
 
 
 resource "aws_iam_instance_profile" "ecs_instance_profile" {

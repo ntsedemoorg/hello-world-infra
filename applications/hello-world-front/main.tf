@@ -57,8 +57,10 @@ resource "aws_ecs_task_definition" "frontend_task" {
     }]
     environment = [
       {
+        # We'd use something better than this really, using the external address is simpler for
+        # demo purposes.
         name  = "API_URL"
-        value = "http://127.0.0.1:8080"
+        value = "http://${data.aws_instance.ecs_instance.public_ip}:8080"
       }
     ]
   }])

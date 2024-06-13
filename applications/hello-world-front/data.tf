@@ -15,3 +15,10 @@ data "aws_subnets" "subnets" {
     values = [data.aws_vpc.main.id]
   }
 }
+
+data "aws_instance" "ecs_instance" {
+  filter {
+    name   = "image-id"
+    values = ["ami-05d6c5e5d6fc4f650"]
+  }
+}
