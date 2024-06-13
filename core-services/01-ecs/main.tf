@@ -9,7 +9,7 @@ resource "aws_key_pair" "ec2_key" {
 
 
 resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "ecsInstanceProfile"
+  name = "ecsEC2InstanceProfile"
   role = aws_iam_role.ecs_instance_role.name
 }
 
