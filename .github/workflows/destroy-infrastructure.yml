@@ -23,14 +23,19 @@ jobs:
         run: |
           run_terraform() {
             dir=$1
+            state_name=$(basename $dir)
+            cp versions.tf "$dir/"
             pushd $dir
-            terraform init
+            terraform init \
+              -backend-config=dynamodb_table=${AWS_REGION}-state-locks \
+              -backend-config=bucket=891377327213-${AWS_REGION}-state \
+              -backend-config=key=development/$state_name/terraform.tfstate
             terraform destroy -no-color -auto-approve
             popd
           }
-          core_services_subdirs=$(find ./core-services -maxdepth 1 -type d | sort -V)
-          application_subdirs=$(find ./applications -maxdepth 1 -type d | sort -V)
-          all_subdirs=$(printf "%s\n%s\n" "$core_services_subdirs" "$application_subdirs")
+          core_services_subdirs=$(find ./core-services -maxdepth 1 -type d | sort -V --reverse)
+          application_subdirs=$(find ./applications -maxdepth 1 -type d | sort -V --reverse)
+          all_subdirs=$(printf "%s\n%s\n" "$application_subdirs" "$core_services_subdirs")
           for dir in $all_subdirs ; do
               if [ -f "$dir/main.tf" ]; then
                 run_terraform "$dir"
