@@ -35,6 +35,21 @@ resource "aws_security_group" "ecs_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port = 5000
+    to_port   = 5000
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 8080
+    to_port   = 8080
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -195,7 +210,7 @@ resource "aws_ecs_task_definition" "frontend_task" {
     environment = [
       {
         name  = "API_URL"
-        value = "http://${aws_instance.ecs_instance.public_ip}:8080/api/hello"
+        value = "http://${aws_instance.ecs_instance.public_ip}:8080"
       }
     ]
   }])
