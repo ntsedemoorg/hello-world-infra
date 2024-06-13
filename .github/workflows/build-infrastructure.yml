@@ -1,4 +1,4 @@
-name: Run Terraform
+name: Build Infrastructure
 
 on:
   push:
@@ -15,12 +15,42 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Run Terraform
+      - name: Run core-services Terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_REGION: 'eu-west-1'
         run: |
-            terraform init
-            terraform plan -no-color -input=false -out=tfplan
-            terraform apply -no-color -input=false tfplan
+          subdirs=$(find ./core-services -maxdepth 1 -type d | sort -V)
+          for dir in $subdirs ; do
+              if [ -f "$dir/main.tf" && "$dir" != "." ]; then
+                pushd "$dir"
+                terraform init
+                terraform validate
+                terraform plan -no-color -input=false -out=tfplan
+                terraform apply -no-color -input=false tfplan
+                popd "$dir"
+              else
+                  echo "No Terraform configuration found in $dir, skipping..."
+              fi
+          done
+
+      - name: Run applications Terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION: 'eu-west-1'
+        run: |
+          subdirs=$(find ./applications -maxdepth 1 -type d | sort -V)
+          for dir in $subdirs ; do
+            if [ -f "$dir/main.tf" && "$dir" != "." ]; then
+              pushd "$dir"
+              terraform init
+              terraform validate
+              terraform plan -no-color -input=false -out=tfplan
+              terraform apply -no-color -input=false tfplan
+              popd "$dir"
+            else
+              echo "No Terraform configuration found in $dir, skipping..."
+            fi
+          done

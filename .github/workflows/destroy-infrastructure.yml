@@ -1,4 +1,4 @@
-name: Run Terraform
+name: Destroy Infrastructure
 
 on: 
   workflow_dispatch:
