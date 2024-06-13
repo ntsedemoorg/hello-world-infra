@@ -23,7 +23,7 @@ jobs:
         run: |
           subdirs=$(find ./core-services -maxdepth 1 -type d | sort -V)
           for dir in $subdirs ; do
-              if [ -f "$dir/main.tf" && "$dir" != "." ]; then
+              if [ -f "$dir/main.tf" ] && [ "$dir" != "." ]; then
                 pushd "$dir"
                 terraform init
                 terraform validate
@@ -43,7 +43,7 @@ jobs:
         run: |
           subdirs=$(find ./applications -maxdepth 1 -type d | sort -V)
           for dir in $subdirs ; do
-            if [ -f "$dir/main.tf" && "$dir" != "." ]; then
+            if [ -f "$dir/main.tf" ] && [ "$dir" != "." ]; then
               pushd "$dir"
               terraform init
               terraform validate
