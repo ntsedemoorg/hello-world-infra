@@ -7,3 +7,7 @@ resource "aws_elasticache_cluster" "memcached" {
   port                 = 11211
 }
 
+import {
+  to = aws_elasticache_cluster.memcached
+  id = "memcached-cache"
+}
