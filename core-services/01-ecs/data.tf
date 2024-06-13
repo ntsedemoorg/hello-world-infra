@@ -5,7 +5,7 @@ data "aws_vpc" "main" {
   }
 }
 
-data "aws_subnet" "subnets" {
+data "aws_subnets" "subnets" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.main.id]

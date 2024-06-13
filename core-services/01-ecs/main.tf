@@ -19,7 +19,7 @@ resource "aws_instance" "ecs_instance" {
   iam_instance_profile   = aws_iam_instance_profile.ecs_instance_profile.name
   key_name               = aws_key_pair.ec2_key.key_name
   vpc_security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_id              = data.aws_subnet.subnets[0].id
+  subnet_id              = data.aws_subnets.subnets.ids[0]
   associate_public_ip_address = true
 
   user_data = base64encode(<<-EOF
