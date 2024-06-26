@@ -28,6 +28,7 @@ on:
 
 jobs:
   define_matrix:
+    name: Define directory matrix
     runs-on: ubuntu-latest
     outputs:
       directories: ${{ steps.directories.outputs.json_directory_list }}
@@ -73,6 +74,14 @@ jobs:
             ${{ matrix.directory }}
             environment
             globals.tf
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ inputs.aws_region }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # role-duration-seconds: 1600
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
@@ -121,9 +130,6 @@ jobs:
       - name: Terraform Init
         working-directory: ${{ matrix.directory }}
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ inputs.aws_region }}
           AWS_ACCOUNT_NUMBER: ${{ inputs.aws_account }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           DIRECTORY: ${{ matrix.directory }}
@@ -137,9 +143,6 @@ jobs:
       - name: Terraform Plan
         working-directory: ${{ matrix.directory }}
         env: 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ inputs.aws_region }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
         run: terraform plan -no-color -input=false -out=tfplan -compact-warnings ${TERRAFORM_VARIABLES} 
@@ -149,9 +152,6 @@ jobs:
         env: 
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ inputs.aws_region }}
         run: echo terraform apply -no-color -input=false tfplan
 
   
