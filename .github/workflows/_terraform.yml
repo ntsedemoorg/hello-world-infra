@@ -18,7 +18,7 @@ on:
           description: "The number of the AWS account where the resources will be applied"
         aws_region:
           required: false
-          default: "eu-west-2"
+          default: "eu-west-1"
           type: string
       secrets:
         AWS_ACCESS_KEY_ID:
