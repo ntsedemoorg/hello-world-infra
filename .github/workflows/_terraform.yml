@@ -59,6 +59,7 @@ jobs:
     strategy:
       matrix:
         directory: ${{ fromJSON(needs.define_matrix.outputs.directories) }}
+      max-parallel: 1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -97,8 +98,8 @@ jobs:
           }
 
           find_env_var_files() {
-            local tfvars="../../environment/${ENVIRONMENT_NAME}.tfvars"
-            local tfvars="../../environment/${ENVIRONMENT_NAME}.tfvars.json"
+            local tfvars="environment/${ENVIRONMENT_NAME}.tfvars"
+            local tfvars="environment/${ENVIRONMENT_NAME}.tfvars.json"
             if [[ -f "$tfvars" ]]; then
               echo "-var-file=$tfvars"
             elif [[ -f "$json" ]]; then
@@ -107,9 +108,9 @@ jobs:
           }
 
           global_vars_file="-var-file=$(readlink -f globals.tfvars)"
-          app_var_file=$(find_app_var_files "$DIRECTORY")
+          app_var_file=$(find_app_var_files "$DIRECTORY") 
           env_var_file=$(find_env_var_files)
-          full_variable_flags="$global_vars_file" "$app_var_file" "$app_var_file"
+          full_variable_flags="$global_vars_file $app_var_file $env_var_file"
 
           echo "tf_vars=$full_variable_flags" >> $GITHUB_OUTPUT
 
