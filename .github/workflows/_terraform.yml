@@ -4,11 +4,11 @@ on:
     workflow_call:
       inputs:
         terraform_version:
-          required: true
+          required: false
           default: "1.5.2"
           type: string
         environment_name:
-          required: true
+          required: false
           default: "development"
           type: string              
         aws_account:
