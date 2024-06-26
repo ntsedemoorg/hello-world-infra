@@ -84,10 +84,6 @@ jobs:
           DIRECTORY: ${{ matrix.directory }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
         run: |
-          global_vars_file="-var-file=$(readlink -f globals.tfvars)"
-          app_var_file=$(find_app_var_files "$DIRECTORY")
-          env_var_file=$(find_env_var_files)
-
           find_app_var_files() {
             local dir=$1
             local state_name=$(basename "$dir")
@@ -110,6 +106,9 @@ jobs:
             fi
           }
 
+          global_vars_file="-var-file=$(readlink -f globals.tfvars)"
+          app_var_file=$(find_app_var_files "$DIRECTORY")
+          env_var_file=$(find_env_var_files)
           full_variable_flags="$global_vars_file" "$app_var_file" "$app_var_file"
 
           echo "tf_vars=$full_variable_flags" >> $GITHUB_OUTPUT
