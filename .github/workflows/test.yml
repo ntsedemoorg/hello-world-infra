@@ -7,4 +7,4 @@ jobs:
   call:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./terraform.yml
+      - uses: ./.github/workflows/_terraform.yml
