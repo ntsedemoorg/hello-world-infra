@@ -6,6 +6,10 @@ on:
 jobs:
   call:
     uses: ./.github/workflows/_terraform.yml
+    with:
+      aws_account: "891377327213"
+      aws_region: "eu-west-1"
+      environment_name: "production"
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
