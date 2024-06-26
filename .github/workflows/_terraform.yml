@@ -95,9 +95,9 @@ jobs:
             local tfvars="$dir/tfvars/${state_name}-${ENVIRONMENT_NAME}.tfvars"
             local json="$dir/tfvars/${state_name}-${ENVIRONMENT_NAME}.tfvars.json"
             if [[ -f "$tfvars" ]]; then
-              echo "-var-file=$tfvars"
+              echo "-var-file=$(readlink -f $tfvars)"
             elif [[ -f "$json" ]]; then
-              echo "-var-file=$json"
+              echo "-var-file=$(readlink -f $json)"
             fi
           }
 
@@ -105,9 +105,9 @@ jobs:
             local tfvars="environment/${ENVIRONMENT_NAME}.tfvars"
             local tfvars="environment/${ENVIRONMENT_NAME}.tfvars.json"
             if [[ -f "$tfvars" ]]; then
-              echo "-var-file=$tfvars"
+              echo "-var-file=$(readlink -f $tfvars)"
             elif [[ -f "$json" ]]; then
-              echo "-var-file=$json"
+              echo "-var-file=$(readlink -f $json)"
             fi
           }
 
