@@ -20,6 +20,11 @@ on:
           required: false
           default: "eu-west-2"
           type: string
+      secrets:
+        AWS_ACCESS_KEY_ID:
+          required: true
+        AWS_SECRET_ACCESS_KEY:
+          required: true
 
 jobs:
   define_matrix:
@@ -116,8 +121,8 @@ jobs:
 
       - name: Terraform Init
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ inputs.aws_region }}
           AWS_ACCOUNT_NUMBER: ${{ inputs.aws_account }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
@@ -132,6 +137,8 @@ jobs:
         
       - name: Terraform Plan
         env: 
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
         run: terraform plan -no-color -input=false -out=tfplan ${TERRAFORM_VARIABLES}
