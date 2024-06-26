@@ -49,7 +49,7 @@ jobs:
 
           json_directory_list=$(echo -n "${directories%,}" | jq -Rs 'split(",") | map(select(. != ""))')
           echo $json_directory_list
-          echo "json_directory_list=$json_directory_list" >> "$GITHUB_OUTPUT"
+          echo -n "json_directory_list=$json_directory_list" >> "$GITHUB_OUTPUT"
     
   build:
     name: Build AWS Infrastructure - ${{ matrix.directory }}
