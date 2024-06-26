@@ -74,7 +74,6 @@ jobs:
             environment
             globals.tf
 
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -120,6 +119,7 @@ jobs:
           echo "tf_vars=$full_variable_flags" >> $GITHUB_OUTPUT
 
       - name: Terraform Init
+        working-directory: ${{ matrix.directory }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -129,13 +129,13 @@ jobs:
           DIRECTORY: ${{ matrix.directory }}
         run: |
           state_name=$(basename "$DIRECTORY")
-          cd ${{matrix.directory}}
           terraform init \
             -backend-config=dynamodb_table="${AWS_REGION}"-state-locks \
             -backend-config=bucket="${AWS_ACCOUNT_NUMBER}"-"${AWS_REGION}"-state \
             -backend-config=key="${ENVIRONMENT_NAME}"/"$state_name"/terraform.tfstate
         
       - name: Terraform Plan
+        working-directory: ${{ matrix.directory }}
         env: 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -144,6 +144,7 @@ jobs:
         run: terraform plan -no-color -input=false -out=tfplan ${TERRAFORM_VARIABLES}
 
       - name: Terraform Apply
+        working-directory: ${{ matrix.directory }}
         env: 
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
