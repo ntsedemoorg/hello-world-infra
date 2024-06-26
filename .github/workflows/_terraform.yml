@@ -139,6 +139,7 @@ jobs:
         env: 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ inputs.aws_region }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
         run: terraform plan -no-color -input=false -out=tfplan ${TERRAFORM_VARIABLES}
@@ -148,6 +149,9 @@ jobs:
         env: 
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ inputs.aws_region }}
         run: echo terraform apply -no-color -input=false tfplan
 
   
