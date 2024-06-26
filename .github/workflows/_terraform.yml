@@ -142,7 +142,7 @@ jobs:
           AWS_REGION: ${{ inputs.aws_region }}
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
-        run: terraform plan -no-color -input=false -out=tfplan ${TERRAFORM_VARIABLES}
+        run: terraform plan -no-color -input=false -out=tfplan -compact-warnings ${TERRAFORM_VARIABLES} 
 
       - name: Terraform Apply
         working-directory: ${{ matrix.directory }}
