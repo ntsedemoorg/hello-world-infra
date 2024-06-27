@@ -22,9 +22,15 @@ on:
           type: string
       secrets:
         AWS_ACCESS_KEY_ID:
-          required: true
+          required: false
         AWS_SECRET_ACCESS_KEY:
-          required: true
+          required: false
+        AZURE_SUBSCRIPTION_ID:
+          required: false
+        AZURE_TENANT_ID:
+          required: false
+        AZURE_CLIENT_ID:
+          required: false
 
 jobs:
   define_matrix:
@@ -77,11 +83,27 @@ jobs:
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        if: ${{ env.AWS_SECRET_ACCESS_KEY != '' && env.AWS_ACCESS_KEY_ID != '' }}
         with:
           aws-region: ${{ inputs.aws_region }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           # role-duration-seconds: 1600
+
+      - name: Configure Azure Credentials
+        uses: azure/login@v2
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        if: ${{ env.AZURE_CLIENT_ID != '' && env.AZURE_TENANT_ID != '' && env.AZURE_SUBSCRIPTION_ID != '' }}
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }} 
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
