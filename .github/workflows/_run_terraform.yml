@@ -104,7 +104,7 @@ jobs:
         working-directory: ${{ matrix.directory }}
         id: backend
         run: |
-          backend_type=$(grep -oP 'backend "\K[^"]+' ./backend.tf)
+          backend_type=$(grep -oP 'backend\s+"?\K[^"\s]+' ./backend.tf)
           echo "backend_type=$backend_type" >> $GITHUB_OUTPUT
 
       - name: Terraform Init with S3 Backend
