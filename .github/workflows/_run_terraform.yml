@@ -115,7 +115,7 @@ jobs:
           files_to_copy=("providers.tf" "terraform.tf")
           
           for FILE in "${files_to_copy[@]}"; do
-            if [[ -f "$DIRECTORY"/"$FILE" ]]; then
+            if [[ ! -f "$DIRECTORY"/"$FILE" ]]; then
                 cp "$FILE" "$DIRECTORY"/
             else
               echo "NOTE - $(basename "$DIRECTORY") has its own "$FILE" file. Not copying "$FILE" from root"
