@@ -86,12 +86,20 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Copy files
+      - name: Copy providers.tf and terraform.tf
         env:
           DIRECTORY: ${{ matrix.directory }}
         run: |
-          cp versions.tf "$DIRECTORY"/
+          files_to_copy=("providers.tf" "terraform.tf")
 
+          for FILE in "${files_to_copy[@]}"; do
+            if [[ -f "$DIRECTORY"/"$FILE" ]]; then
+                cp "$FILE" "$DIRECTORY"/
+            else
+              echo "NOTE - $(basename "$DIRECTORY") has its own "$FILE" file. Not copying "$FILE" from root"
+            fi
+          done
+        
       - name: Find Terraform variables
         id: variables
         env:
