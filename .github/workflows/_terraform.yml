@@ -152,7 +152,9 @@ jobs:
         if: ${{ inputs.environment_name == 'prod' || inputs.environment_name == 'preprod' }}
         run: |
           delete_count=$(terraform show -json tfplan | jq -r '([.resource_changes[]?.change?.actions?] | flatten) + ([.output_changes[]?.actions?] | flatten) | (map(select(.=="delete")) | length)')
-          echo $delete_count will be deleted
+          if [[ "$delete_count" -gt "0" ]]; then
+            echo "WARNING - Resources will be destroyed in $(basename `pwd`). Manual approval is required!"
+          fi
 
       - name: Terraform Apply
         working-directory: ${{ matrix.directory }}
