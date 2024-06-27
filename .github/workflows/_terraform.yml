@@ -145,7 +145,14 @@ jobs:
         env: 
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
           TERRAFORM_VARIABLES: ${{ steps.variables.outputs.tf_vars }}
-        run: terraform plan -no-color -input=false -out=tfplan -compact-warnings ${TERRAFORM_VARIABLES} 
+        run: terraform plan -no-color -input=false -out=tfplan -compact-warnings ${TERRAFORM_VARIABLES}
+
+      - name: Terraform Destructive Actions Check
+        working-directory: ${{ matrix.directory }}
+        if: ${{ inputs.environment_name == 'prod' || inputs.environment_name == 'preprod' }}
+        run: |
+          delete_count=$(terraform show -json tfplan | jq -r '([.resource_changes[]?.change?.actions?] | flatten) + ([.output_changes[]?.actions?] | flatten) | (map(select(.=="delete")) | length)')
+          echo $delete_count will be deleted
 
       - name: Terraform Apply
         working-directory: ${{ matrix.directory }}
