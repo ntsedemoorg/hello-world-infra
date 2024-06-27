@@ -5,7 +5,7 @@ on:
 
 jobs:
   call:
-    uses: ./.github/workflows/_terraform.yml
+    uses: ./.github/workflows/_run_terraform.yml
     with:
       aws_account: "891377327213"
       aws_region: "eu-west-1"
