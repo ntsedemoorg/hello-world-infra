@@ -42,8 +42,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: ./.github/actions/order-terraform-directories
+      - name: Determine order to run Terraform stacks
+        uses: ./.github/actions/order-terraform-directories
         id: directories
+      
+      - name: Show order
+        run: echo ${{ steps.directories.outputs.json_directory_list }}
     
   build:
     name: Build Infrastructure - ${{ matrix.directory }}
