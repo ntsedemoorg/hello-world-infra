@@ -121,7 +121,7 @@ def extract_dependencies(file_path):
 
 def topological_sort(nodes):
     """
-    Perform topological sorting of nodes in a dependency graph.
+    Perform topological sorting of nodes in required order of deploy.
 
     Args:
         nodes (iterable): Iterable of Node objects representing nodes in the graph.
@@ -143,7 +143,7 @@ def topological_sort(nodes):
     for node in nodes:
         visit(node)
 
-    return sorted_nodes[::-1]
+    return sorted_nodes
 
 
 if __name__ == "__main__":
